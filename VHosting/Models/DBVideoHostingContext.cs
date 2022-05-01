@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace VHosting
 {
-    public partial class DBVideoHostingContext : DbContext
+    public partial class DBVideoHostingContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public DBVideoHostingContext()
         {
@@ -14,6 +16,7 @@ namespace VHosting
         public DBVideoHostingContext(DbContextOptions<DBVideoHostingContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public virtual DbSet<Account> Accounts { get; set; } = null!;
@@ -21,7 +24,6 @@ namespace VHosting
         public virtual DbSet<PaymentReceipt> PaymentReceipts { get; set; } = null!;
         public virtual DbSet<Playlist> Playlists { get; set; } = null!;
         public virtual DbSet<SettingsOption> SettingsOptions { get; set; } = null!;
-        public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<UserSetting> UserSettings { get; set; } = null!;
         public virtual DbSet<Video> Videos { get; set; } = null!;
         public virtual DbSet<WatchedVideo> WatchedVideos { get; set; } = null!;
@@ -323,6 +325,8 @@ namespace VHosting
             });
 
             OnModelCreatingPartial(modelBuilder);
+
+            base.OnModelCreating(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

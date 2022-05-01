@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VHosting
 {
-    public partial class User
+    
+    public partial class User : IdentityUser<int>
     {
         public User()
         {
@@ -17,8 +21,9 @@ namespace VHosting
             Users = new HashSet<User>();
         }
 
-        public int Id { get; set; }
-        public string Email { get; set; } = null!;
+        [Key]
+        public override int Id { get; set; }
+        public override string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string Nickname { get; set; } = null!;
         public string? PaymentCard { get; set; }

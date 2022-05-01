@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VHosting;
 
@@ -10,6 +11,8 @@ builder.Services.AddDbContext<DBVideoHostingContext>(option => option.UseSqlServ
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
+builder.Services.AddIdentity<User, IdentityRole<int>>().AddEntityFrameworkStores<DBVideoHostingContext>().AddDefaultTokenProviders();
+builder.Services.AddMvc();
 
 var app = builder.Build();
 
@@ -27,6 +30,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllerRoute(
     name: "default",
