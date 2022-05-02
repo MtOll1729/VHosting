@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,24 +10,37 @@ namespace VHosting.Controllers
     public class ChartController : ControllerBase
     {
         private readonly DBVideoHostingContext _context;
-        public ChartController(DBVideoHostingContext context)
+        private readonly UserManager<User> _userManager;
+        public ChartController(DBVideoHostingContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet("JsonData")]
         public JsonResult JsonData()
         {
-            var users = _context.Users.Include(x => x.Subsribers).ToList();
-            List<object> usersInfo = new List<object>();
+            var videos = _context.Videos
+                .Include(x => x.WatchedVideos)
+                .Where(x => x.UserId == GetCurrentUserId().Result).ToList();
+            List<object> videosInfo = new List<object>();
 
-            usersInfo.Add(new[] {"User", "Videos"});
-            foreach(var user in users)
+            videosInfo.Add(new[] {"Video", "Watched times"});
+            foreach(var video in videos)
             {
-                usersInfo.Add(new object[] { user.Nickname, user.Subsribers.Count });
+                videosInfo.Add(new object[] { video.Name, video.WatchedVideos.Count });
             }
 
-            return new JsonResult(usersInfo);
+            return new JsonResult(videosInfo);
         }
+
+        [HttpGet]
+        public async Task<int?> GetCurrentUserId()
+        {
+            User usr = await GetCurrentUserAsync();
+            return usr?.Id;
+        }
+
+        private Task<User> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
     }
 }

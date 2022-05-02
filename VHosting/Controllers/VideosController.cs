@@ -47,6 +47,22 @@ namespace VHosting.Controllers
                 return NotFound();
             }
 
+            var userId = GetCurrentUserId();
+
+            if (userId.Result != null && !video.WatchedVideos.Any(x => x.UserId == userId.Result))
+            {
+                video.WatchedVideos.Add(
+                    new WatchedVideo
+                    {
+                        UserId = (int)userId.Result,
+                        VideoId = video.Id,
+                        IsLiked = false,
+                        IsDisliked = false,
+                        WatchedTime = new TimeSpan()
+                    });
+                _context.SaveChanges();
+            }
+
             return View(video);
         }
 
