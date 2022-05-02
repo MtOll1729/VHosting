@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +13,14 @@ namespace VHosting.Controllers
 {
     public class VideosController : Controller
     {
-        private readonly DBVideoHostingContext _context;
 
-        public VideosController(DBVideoHostingContext context)
+        private readonly DBVideoHostingContext _context;
+        private readonly UserManager<User> _userManager;
+
+        public VideosController(DBVideoHostingContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Videos
@@ -36,6 +40,7 @@ namespace VHosting.Controllers
 
             var video = await _context.Videos
                 .Include(v => v.User)
+                .Include(v => v.Comments)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (video == null)
             {
@@ -156,5 +161,36 @@ namespace VHosting.Controllers
         {
             return _context.Videos.Any(e => e.Id == id);
         }
+
+        [HttpPost]
+        public IActionResult AddComment(string? Text, int Id)
+        {
+            var video = _context.Videos.Find(Id);
+            var userId = GetCurrentUserId();
+
+            if (userId.Result == null) return RedirectToAction("Login", "Account");
+
+            video.Comments.Add(
+                new Comment()
+                {
+                    VideoId = Id,
+                    UserId = (int)userId.Result,
+                    Text = Text
+                }
+                );
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Details", new { Id });
+        }
+
+        [HttpGet]
+        public async Task<int?> GetCurrentUserId()
+        {
+            User usr = await GetCurrentUserAsync();
+            return usr?.Id;
+        }
+
+        private Task<User> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
     }
 }

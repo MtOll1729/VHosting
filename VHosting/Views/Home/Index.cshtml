@@ -2,52 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-
-<div>
-    <h3>Оберіть exel-файл для заватаження</h3>
-    @using (Html.BeginForm("Import", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
-    {
-        <div>
-            Завантажте Excel-файл:
-            <input type="file" name="fileExcel" id="fileExcel" />
-            <div>
-                <input type="submit" value="Завантажити" />
-            </div>
-        </div>
-    }
-</div>
-<div>
-    <h3>Завантаження інформації в файл</h3>
-    <a asp-action="Export"> Завантажити </a>
-</div>
 
 
 
-<div class="container">
-    <div id="chart1"></div>
-</div>
-@section scripts{
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script>
-    google.charts.load('current', { 'packages': ['corechart'] });
-    google.charts.setOnLoadCallback(drawChart);
 
-        function drawChart() {
-
-            $.get('/api/Chart/JsonData', function(JsonData) {
-                data = google.visualization.arrayToDataTable(JsonData, false);
-                var option = {
-                    title: "Співвідношення кількості книжок та категорій",
-                    width: 500,
-                    height: 400
-                };
-                chart = new google.visualization.PieChart(document.getElementById('chart1'));
-                chart.draw(data, option);
-            })
-        }
-    </script>
-}

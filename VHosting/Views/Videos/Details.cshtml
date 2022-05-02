@@ -4,57 +4,122 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h4>@Model?.Name</h4>
+<div class="row">
+    <div class="col float-begin">   
+        <video src="@Url.Content(@Model?.Link)" controls autoplay />
+    </div>
+    <div class="col float-end w-100">
+        @*<div class="row" id="comment-section">
+            <div class="h3">Comment section</div>
+            <hr />
+            @foreach(var comm in Model?.Comments)
+            {
+                <div class="col-12 comment">
+                    <div class="h4">@comm.User.Nickname</div>
+                    <div class="text">@comm.Text</div>
+                </div>
+            }
+        </div>*@
 
-<div>
-    <h4>Video</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Link)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Link)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Likes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Likes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Dislikes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Dislikes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsMonetized)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsMonetized)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Id)
-        </dd>
-    </dl>
+        <div class="container mt-5 mb-5">
+    <div class="row height d-flex justify-content-center align-items-center">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="p-3">
+                    <h4>Comments</h4>
+                </div>
+                <div class="mt-3 d-flex flex-row align-items-center p-3 form-color" style="white-space: nowrap;"> 
+                    @using (Html.BeginForm("AddComment", "Videos", FormMethod.Post))
+                    {
+                        <input type="text" class="form-control flex-" placeholder="Enter your comment..." name="Text" id="Text">
+                        <input type="number" style="visibility: hidden; width: 0px; height: 0px;" name="Id" id="Id" value="@Model.Id">
+                        <button id="submitNewCom" style="width: 20%;" type="submit"><i class="bi-send"></i></button>
+                    }
+                </div>
+                <div class="mt-2">
+                    @foreach(var com in Model?.Comments)
+                    {
+                    <div class="d-flex flex-row p-3 comment">
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex flex-row align-items-center"> <span class="mr-2">@com.User.Nickname</span></div>
+                            </div>
+                            <p class="text-justify comment-text mb-0">@com.Text</p>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    </div>
 </div>
+
+
+<style>
+    video {
+        width: 600px;
+        height: 400px;
+    }
+
+.card {
+    background-color: #fff;
+    border: none
+}
+
+.form-color {
+    background-color: #fafafa
+}
+
+.form-control {
+    height: 48px;
+    display: inline;
+    border-radius: 25px
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #35b69f;
+    outline: 0;
+    box-shadow: none;
+    text-indent: 10px
+}
+
+.c-badge {
+    background-color: #35b69f;
+    color: white;
+    height: 20px;
+    font-size: 11px;
+    width: 92px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px
+}
+
+.comment-text {
+    font-size: 13px
+}
+
+.wish {
+    color: #35b69f
+}
+
+.user-feed {
+    font-size: 14px;
+    margin-top: 12px
+}
+
+.comment {
+    background: #fff8e6;
+    border: 2px solid black;
+}
+</style>
+
+<script>
+    
+</script>

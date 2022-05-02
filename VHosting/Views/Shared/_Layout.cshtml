@@ -30,9 +30,13 @@
             <div class="navbar-collapse collapse">
                 @if(User.Identity.IsAuthenticated)
                 {
-                    <i class="bi-person-circle me-2 d-inline" style="font-size: 2rem;"></i>
-                    <div class="h5 me-3 my-0 fw-bold">@User.Identity.Name</div>
-
+                    @using (Html.BeginForm("Index", "Users", FormMethod.Post))
+                    {
+                        <button type="submit" style="border: 0px; background: #FFFFFF;">
+                            <i class="bi-person-circle me-2 d-inline" style="font-size: 2rem;"></i>
+                            <div class="h5 me-3 my-0 fw-bold">@User.Identity.Name</div>
+                        </button>
+                    }
                     <form method="post" asp-controller="Account" asp-action="Logout">
                         <button class="btn btn-secondary me-3" type="submit">Leave</button>
                     </form>
