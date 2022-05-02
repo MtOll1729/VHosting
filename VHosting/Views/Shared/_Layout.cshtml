@@ -7,41 +7,41 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap_flatly.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/VHosting.styles.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 justify-content-between">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">VHosting</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    @if(User.Identity.IsAuthenticated)
+                <div class="flex-grow-1 mx-3">
+                    @using (Html.BeginForm("Search", "Search", FormMethod.Post))
                     {
-                    <p>@User.Identity.Name</p>
+                        <input type="text" placeholder="Type here" style="width: 90%;" id="searched" name="searched" />
+                        <button type="submit" class="bi-search" style="border: 0px;"></button>
+                    }       
+                </div>
+            </div>
+            <div class="navbar-collapse collapse">
+                @if(User.Identity.IsAuthenticated)
+                {
+                    <i class="bi-person-circle me-2 d-inline" style="font-size: 2rem;"></i>
+                    <div class="h5 me-3 my-0 fw-bold">@User.Identity.Name</div>
 
                     <form method="post" asp-controller="Account" asp-action="Logout">
-                        <input type="submit" value="Вихід" />
+                        <button class="btn btn-secondary me-3" type="submit">Leave</button>
                     </form>
-                    }
-                    else
-                    {
-                    <a asp-controller="Account" asp-action="Login">Вхід</a>
-                    <a asp-controller="Account" asp-action="Register">Реєстація</a>
-                    }
-                </div>
+                }
+                else
+                {
+                    <div class="me-3"><button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("Login", "Account")'">Вхід</button></div>
+                    <button class="btn btn-secondary me-3" type="button" onclick="location.href='@Url.Action("Register", "Account")'">Реєстація</button>
+                }
             </div>
         </nav>
     </header>
