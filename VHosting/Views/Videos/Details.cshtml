@@ -7,7 +7,25 @@
 <h4>@Model?.Name</h4>
 <div class="row">
     <div class="col float-begin">   
-        <video src="@Url.Content(@Model?.Link)" controls autoplay />
+        <video src="@Url.Content(@Model?.Link)" controls autoplay></video>
+        <div style="display: flex;">
+            @using (Html.BeginForm("Like", "Videos", FormMethod.Post))
+            {
+                <input type="number" style="visibility: hidden; width: 0px; height: 0px;" name="id" id="id" value="@Model.Id" />
+                <div style="display: flex; margin-right: 3em;">
+                    <button class="btn btn-primary" type="submit">Like</button><p>@Model.Likes</p>
+                </div>
+            }
+
+            @using (Html.BeginForm("Dislike", "Videos", FormMethod.Post))
+            {
+                <input type="number" style="visibility: hidden; width: 0px; height: 0px;" name="id" id="id" value="@Model.Id" />
+                <div style="display: flex;">
+                    <button class="btn btn-secondary" type="submit">Dislike</button><p>@Model.Dislikes</p>
+                </div>
+            }
+
+        </div>
     </div>
     <div class="col float-end w-100">
         @*<div class="row" id="comment-section">
@@ -23,37 +41,37 @@
         </div>*@
 
         <div class="container mt-5 mb-5">
-    <div class="row height d-flex justify-content-center align-items-center">
-        <div class="col-md-7">
-            <div class="card">
-                <div class="p-3">
-                    <h4>Comments</h4>
-                </div>
-                <div class="mt-3 d-flex flex-row align-items-center p-3 form-color" style="white-space: nowrap;"> 
-                    @using (Html.BeginForm("AddComment", "Videos", FormMethod.Post))
-                    {
-                        <input type="text" class="form-control flex-" placeholder="Enter your comment..." name="Text" id="Text">
-                        <input type="number" style="visibility: hidden; width: 0px; height: 0px;" name="Id" id="Id" value="@Model.Id">
-                        <button id="submitNewCom" style="width: 20%;" type="submit"><i class="bi-send"></i></button>
-                    }
-                </div>
-                <div class="mt-2">
-                    @foreach(var com in Model?.Comments)
-                    {
-                    <div class="d-flex flex-row p-3 comment">
-                        <div class="w-100">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex flex-row align-items-center"> <span class="mr-2">@com.User.Nickname</span></div>
+            <div class="row height d-flex justify-content-center align-items-center">
+                <div class="col-md-7">
+                    <div class="card">
+                        <div class="p-3">
+                            <h4>Comments</h4>
+                        </div>
+                        <div class="mt-3 d-flex flex-row align-items-center p-3 form-color" style="white-space: nowrap;"> 
+                            @using (Html.BeginForm("AddComment", "Videos", FormMethod.Post))
+                            {
+                                <input type="text" class="form-control flex-" placeholder="Enter your comment..." name="Text" id="Text">
+                                <input type="number" style="visibility: hidden; width: 0px; height: 0px;" name="Id" id="Id" value="@Model.Id">
+                                <button id="submitNewCom" style="width: 20%;" type="submit"><i class="bi-send"></i></button>
+                            }
+                        </div>
+                        <div class="mt-2">
+                            @foreach(var com in Model?.Comments)
+                            {
+                            <div class="d-flex flex-row p-3 comment">
+                                <div class="w-100">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex flex-row align-items-center"> <span class="mr-2">@com.User.Nickname</span></div>
+                                    </div>
+                                    <p class="text-justify comment-text mb-0">@com.Text</p>
+                                </div>
                             </div>
-                            <p class="text-justify comment-text mb-0">@com.Text</p>
+                            }
                         </div>
                     </div>
-                    }
                 </div>
             </div>
         </div>
-    </div>
-</div>
     </div>
 </div>
 

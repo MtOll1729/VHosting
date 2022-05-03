@@ -6,6 +6,12 @@
 
 <h1>@Model.Nickname</h1>
 <hr />
+@if (this.User.IsInRole("Admin"))
+{
+    <h2>Admin`s stuff</h2>
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Roles")'">Role manager</button>
+    <hr />
+}
 <h2>My videos</h2>
 <div class="row">
     @foreach(var vid in Model.Videos) {
@@ -15,6 +21,9 @@
             <button class="btn btn-primary" onclick="location.href='@Url.Action("Details", "Videos", new { Id = @vid.Id })'">See now</button>
         </div>
     }
+     <div class="col">
+            <button class="btn btn-primary" onclick="location.href='@Url.Action("Create", "Videos")'">Add video</button>
+     </div>
 </div>
 <hr />
 
@@ -31,23 +40,23 @@
 
 
 <div>
-    <h3>Оберіть exel-файл для заватаження</h3>
-    @using (Html.BeginForm("Import", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
+    <h3>Import excel with playlists (DO IT ONLY IF YOU KNOW HOW IT WORKS)</h3>
+    @using (Html.BeginForm("Import", "Users", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
     {
         <div>
-            Завантажте Excel-файл:
-            <input type="file" name="fileExcel" id="fileExcel" />
-            <div>
-                <input type="submit" value="Завантажити" />
-            </div>
+            Download Excel:
+            <input type="file" name="fileExcel" id="fileExcel" style="display: inline;" />
+            <button class="btn btn-primary" type="submit">Import</button>
         </div>
     }
 </div>
 <div>
-    <h3>Завантаження інформації в файл</h3>
-    <a asp-action="Export"> Завантажити </a>
+    <h3>Export info</h3>
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("Export", "Users")'">Export</button>
 </div>
 <hr />
+
+
 <div class="container">
     <div id="chart1"></div>
 </div>

@@ -41,6 +41,7 @@ namespace VHosting.Controllers
             var video = await _context.Videos
                 .Include(v => v.User)
                 .Include(v => v.Comments)
+                .Include(v => v.WatchedVideos)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (video == null)
             {
@@ -78,16 +79,23 @@ namespace VHosting.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Name,Description,Link,Likes,Dislikes,IsMonetized")] Video video)
+        public async Task<IActionResult> Create([Bind("Name,Description,Link")] Video video)
         {
+            video.UserId = (int)GetCurrentUserId().Result;
+            video.User = _context.Users.Include(x => x.UserSetting).Include(x => x.AccountTypeNavigation).First(x => x.Id == (int)GetCurrentUserId().Result);
+
+            ModelState.Remove("User");
+            await TryUpdateModelAsync(video);
+
+
             if (ModelState.IsValid)
             {
                 _context.Add(video);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", video.UserId);
-            return View(video);
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Videos/Edit/5
@@ -208,5 +216,54 @@ namespace VHosting.Controllers
         }
 
         private Task<User> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+
+        public IActionResult Like(int id)
+        {
+            var info = _context.WatchedVideos.FirstOrDefault(x => (x.UserId == GetCurrentUserId().Result && x.VideoId == id));
+            if(info == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if(info.IsDisliked)
+            {
+                _context.Videos.First(x => x.Id == id).Dislikes--;
+                _context.WatchedVideos.First(x => (x.UserId == GetCurrentUserId().Result && x.VideoId == id)).IsDisliked = false;
+
+            }
+            if(!info.IsLiked)
+            {
+                _context.Videos.First(x => x.Id == id).Likes++;
+                _context.WatchedVideos.First(x => (x.UserId == GetCurrentUserId().Result && x.VideoId == id)).IsLiked = true;
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction("Details", new { id });
+        }
+
+        public IActionResult Dislike(int id)
+        {
+            var info = _context.WatchedVideos.FirstOrDefault(x => (x.UserId == GetCurrentUserId().Result && x.VideoId == id));
+            if (info == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (!info.IsDisliked)
+            {
+                _context.Videos.First(x => x.Id == id).Dislikes++;
+                _context.WatchedVideos.First(x => (x.UserId == GetCurrentUserId().Result && x.VideoId == id)).IsDisliked = true;
+
+            }
+            if (info.IsLiked)
+            {
+                _context.Videos.First(x => x.Id == id).Likes--;
+                _context.WatchedVideos.First(x => (x.UserId == GetCurrentUserId().Result && x.VideoId == id)).IsLiked = false;
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction("Details", new { id });
+        }
     }
+
 }
