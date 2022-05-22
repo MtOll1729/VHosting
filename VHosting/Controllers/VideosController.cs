@@ -47,7 +47,10 @@ namespace VHosting.Controllers
             {
                 return NotFound();
             }
-
+            foreach (var com in video.Comments)
+            {
+                com.User = _context.Users.FirstOrDefault(x => x.Id == com.UserId);
+            }
             var userId = GetCurrentUserId();
 
             if (userId.Result != null && !video.WatchedVideos.Any(x => x.UserId == userId.Result))
